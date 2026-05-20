@@ -1,34 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MIN_AGE_DAYS=2
+MIN_AGE_DAYS=0
 
 while [ "$#" -gt 0 ]; do
-  case "$1" in
-    --min-age-days)
-      [ "$#" -ge 2 ] || {
-        echo "Missing value for --min-age-days" >&2
-        exit 1
-      }
-      MIN_AGE_DAYS="$2"
-      shift 2
-      ;;
-    --min-age-days=*)
-      MIN_AGE_DAYS="${1#*=}"
-      shift
-      ;;
-    *)
-      echo "Unknown argument: $1" >&2
-      exit 1
-      ;;
-  esac
+    case "$1" in
+        --min-age-days)
+            [ "$#" -ge 2 ] || {
+                echo "Missing value for --min-age-days" >&2
+                exit 1
+            }
+            MIN_AGE_DAYS="$2"
+            shift 2
+            ;;
+        --min-age-days=*)
+            MIN_AGE_DAYS="${1#*=}"
+            shift
+            ;;
+        *)
+            echo "Unknown argument: $1" >&2
+            exit 1
+            ;;
+    esac
 done
 
 case "$MIN_AGE_DAYS" in
-  ''|*[!0-9]*)
-    echo "--min-age-days must be a non-negative integer" >&2
-    exit 1
-    ;;
+    '' | *[!0-9]*)
+        echo "--min-age-days must be a non-negative integer" >&2
+        exit 1
+        ;;
 esac
 
 ROOT="$(git rev-parse --show-toplevel)"
@@ -37,18 +37,18 @@ REPO="cavanaug/siberia"
 API="https://api.github.com/repos/${REPO}/releases/latest"
 
 current_version() {
-  ruby -e 'puts File.read(ARGV[0])[/^\s*url\s+".*\/v([^\/]+)\/siberia-\1\.tar\.gz"/, 1]' "$1"
+    ruby -e 'puts File.read(ARGV[0])[/^\s*url\s+".*\/v([^\/]+)\/siberia-\1\.tar\.gz"/, 1]' "$1"
 }
 
 release_data() {
-  curl -fsSL "$API"
+    curl -fsSL "$API"
 }
 
 CURRENT="$(current_version "$FORMULA")"
 RELEASE_JSON="$(release_data)"
 
 eval "$({
-  printf '%s' "$RELEASE_JSON" | ruby -rjson -rtime -e '
+    printf '%s' "$RELEASE_JSON" | ruby -rjson -rtime -e '
     release = JSON.parse(STDIN.read)
     version = release.fetch("tag_name").sub(/^v/, "")
     published_at = Time.iso8601(release.fetch("published_at"))
@@ -78,16 +78,16 @@ echo "Published at:    ${PUBLISHED_AT}"
 echo "Age (days):      ${AGE_DAYS}"
 
 if [ "$TOO_NEW" = "true" ]; then
-  echo "Skipping update: release is newer than ${MIN_AGE_DAYS} days"
-  exit 0
+    echo "Skipping update: release is newer than ${MIN_AGE_DAYS} days"
+    exit 0
 fi
 
 if [ "$LATEST" = "$CURRENT" ]; then
-  echo "Already at latest: ${CURRENT}"
-  exit 0
+    echo "Already at latest: ${CURRENT}"
+    exit 0
 fi
 
-ruby - "$FORMULA" "$LATEST" "$SHA256" <<'RUBY'
+ruby - "$FORMULA" "$LATEST" "$SHA256" << 'RUBY'
 formula, version, sha256 = ARGV
 
 content = File.read(formula)

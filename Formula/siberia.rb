@@ -6,8 +6,8 @@ class Siberia < Formula
 
   desc "Supply-chain hardening for pip, uv, npm, pnpm, and Cargo lockfile auditing"
   homepage "https://github.com/cavanaug/siberia"
-  url "https://github.com/cavanaug/siberia/releases/download/v0.2.0/siberia-0.2.0.tar.gz"
-  sha256 "98f33937e9ca68ec0d282aa46f3744e9de0e4440f1b67b8eb799cc8d64c2147c"
+  url "https://github.com/cavanaug/siberia/releases/download/v0.3.0/siberia-0.3.0.tar.gz"
+  sha256 "3f86fcf9bc7c1f9f0a7107153a23f1f0c93e495dd5d9daec315fa2f11d3ac31e"
   license "MIT"
 
   depends_on "python@3.11"
